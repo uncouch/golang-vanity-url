@@ -1,0 +1,21 @@
+name: build-push-deploy
+on:
+  push:
+    branches:
+      - 'main'
+env:
+  GO_VERSION: 1.15.x
+jobs:
+  test-build-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Build and push container image
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: docker.pkg.github.com
+          repository: uncouch/golang-vanity-url/govu
+          tag_with_ref: true
