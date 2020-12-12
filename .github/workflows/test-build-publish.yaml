@@ -18,4 +18,5 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: docker.pkg.github.com
           repository: uncouch/golang-vanity-url/govu
-          tag_with_ref: true
+          tag_with_sha: true
+          tags: latest
