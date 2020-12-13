@@ -27,8 +27,7 @@ jobs:
           images: ${{ secrets.REGISTRY_URL }}/golang-vanity-url
           tag-sha: true
           tag-latest: false
-          tag-custom:
-            - latest
+          tag-custom: latest
       - name: Build and push container image
         uses: docker/build-push-action@v2
         with:
