@@ -15,8 +15,8 @@ jobs:
         uses: docker/build-push-action@v1
         with:
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          registry: docker.pkg.github.com
-          repository: uncouch/golang-vanity-url/govu
+          password: ${{ secrets.GH_ACTIONS_TOKEN }}
+          registry: ghcr.io
+          repository: uncouch/golang-vanity-url
           tag_with_sha: true
           tags: latest
