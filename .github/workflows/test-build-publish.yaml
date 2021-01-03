@@ -8,15 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: dorny/paths-filter@v2
-      id: filter
-      with:
-        filters: |
-          golang:
-            - '**/*.go'
-            - 'go.*'
     - uses: google-github-actions/setup-gcloud@v0.2.0
-      if: steps.filter.outputs.golang == 'true'
       with:
         project_id: ${{ secrets.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.GCP_SA_KEY }}
@@ -25,9 +17,7 @@ jobs:
       if: steps.filter.outputs.golang == 'true'
     - run: |
         gcloud auth configure-docker ${{ secrets.REGISTRY_HOST }}
-      if: steps.filter.outputs.golang == 'true'
     - uses: crazy-max/ghaction-docker-meta@v1
-      if: steps.filter.outputs.golang == 'true'
       id: docker_meta
       with:
         images: ${{ secrets.REGISTRY_URL }}/${{ github.event.repository.name }}
@@ -35,7 +25,6 @@ jobs:
         tag-latest: false
         tag-custom: latest
     - uses: docker/build-push-action@v2
-      if: steps.filter.outputs.golang == 'true'
       with:
         push: true
         tags: ${{ steps.docker_meta.outputs.tags }}
