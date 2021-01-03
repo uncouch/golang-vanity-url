@@ -42,7 +42,7 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     if: always()
-    needs: [linter, test, tag]
+    needs: [test-build-publish]
     steps:
     - uses: Gamesight/slack-workflow-status@v1.0.1
       if: always()
