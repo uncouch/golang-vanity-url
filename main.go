@@ -18,7 +18,7 @@ const (
 	_templateSource     = `<html>
     <head>
         <meta name="go-import" content="{{ .VanityDomain }}{{ .VanityPath }} git {{ .GitHubOrgURL }}/{{ .GitRepository }}">
-:wq        <meta name="go-source" content="{{ .VanityDomain }}{{ .VanityPath }}     {{ .GitHubOrgURL }}/{{ .GitRepository }} {{ .GitHubOrgURL }}/{{ .GitRepository }}/tree/{{ .GitHubBranch }}{/dir} {{ .GitHubOrgURL }}/{{ .GitRepository }}/blob/{{ .GitHubBranch }}{/dir}/{file}#L{line}">
+        <meta name="go-source" content="{{ .VanityDomain }}{{ .VanityPath }}     {{ .GitHubOrgURL }}/{{ .GitRepository }} {{ .GitHubOrgURL }}/{{ .GitRepository }}/tree/{{ .GitHubBranch }}{/dir} {{ .GitHubOrgURL }}/{{ .GitRepository }}/blob/{{ .GitHubBranch }}{/dir}/{file}#L{line}">
     </head>
 </html>
 `
