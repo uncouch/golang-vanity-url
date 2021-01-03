@@ -18,7 +18,7 @@ const (
 	_templateSource     = `<html>
     <head>
         <meta name="go-import" content="{{ .VanityDomain }}{{ .VanityPath }} git {{ .GitHubOrgURL }}/{{ .GitRepository }}">
-        <meta name="go-source" content="{{ .VanityDomain }}{{ .VanityPath }}     {{ .GitHubOrgURL }}/{{ .GitRepository }} {{ .GitHubOrgURL }}/{{ .GitRepository }}/tree/master{/dir} {{ .GitHubOrgURL }}/{{ .GitRepository }}/blob/master{/dir}/{file}#L{line}">
+:wq        <meta name="go-source" content="{{ .VanityDomain }}{{ .VanityPath }}     {{ .GitHubOrgURL }}/{{ .GitRepository }} {{ .GitHubOrgURL }}/{{ .GitRepository }}/tree/{{ .GitHubBranch }}{/dir} {{ .GitHubOrgURL }}/{{ .GitRepository }}/blob/{{ .GitHubBranch }}{/dir}/{file}#L{line}">
     </head>
 </html>
 `
@@ -30,6 +30,7 @@ var (
 )
 
 type templateContext struct {
+	GitHubBranch  string
 	GitHubOrgURL  string
 	GitRepository string
 	VanityDomain  string
@@ -56,7 +57,12 @@ func main() {
 
 	githubOrgURL := fmt.Sprintf("https://github.com/%s", githubOrg)
 
-	http.HandleFunc("/", vanityHandler(domain, githubOrgURL))
+	githubBranch := os.Getenv("GITHUB_BRANCH")
+	if githubBranch == "" {
+		log.Fatal(fmt.Errorf("required env variable: GITHUB_BRANCH"))
+	}
+
+	http.HandleFunc("/", vanityHandler(domain, githubOrgURL, githubBranch))
 
 	log.Printf("listening on port %s", port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), nil); err != nil {
@@ -64,7 +70,7 @@ func main() {
 	}
 }
 
-func vanityHandler(domain, githubOrgURL string) http.HandlerFunc {
+func vanityHandler(domain, githubOrgURL, githubBranch string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
@@ -76,9 +82,13 @@ func vanityHandler(domain, githubOrgURL string) http.HandlerFunc {
 			return
 		}
 
+		// fixme: /service/foundation => service-foundation
+		// fixme: /service/api-authorizer => service-api-authorizer
+		pathParts := strings.Split(r.URL.Path, "/")[1:]
 		tmplCtx := templateContext{
+			GitHubBranch:  githubBranch,
 			GitHubOrgURL:  githubOrgURL,
-			GitRepository: strings.Join(strings.Split(r.URL.Path, "/")[1:], "-"),
+			GitRepository: strings.Join(pathParts, "-"),
 			VanityDomain:  domain,
 			VanityPath:    r.URL.Path,
 		}
